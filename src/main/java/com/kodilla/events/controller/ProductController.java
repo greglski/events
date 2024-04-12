@@ -2,6 +2,7 @@ package com.kodilla.events.controller;
 
 import com.kodilla.events.domain.ProductDto;
 import com.kodilla.events.event.ProductRegisteredEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("v1/products")
 public class ProductController implements ApplicationEventPublisherAware {
@@ -16,7 +18,7 @@ public class ProductController implements ApplicationEventPublisherAware {
 
     @PostMapping("createProduct")
     public void createProduct(@RequestBody ProductDto productDto) {
-        System.out.println("Register product: " + productDto.getProductName());
+        log.info("Register product: {}", productDto.getProductName());
         publisher.publishEvent(
                 new ProductRegisteredEvent(
                         this,

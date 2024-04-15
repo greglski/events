@@ -1,12 +1,12 @@
 package com.kodilla.events.controller;
 
 import com.kodilla.events.domain.CalculationDto;
+import com.kodilla.events.exception.DivisionException;
 import com.kodilla.events.service.CalculationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,33 +14,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("v1/calculation")
-public class CalculationController implements ApplicationEventPublisherAware {
-    private ApplicationEventPublisher publisher;
+public class CalculationController {
+
     private final CalculationService calculationService;
 
-    @PatchMapping("/sum")
-    public ResponseEntity<Integer> getSum(@RequestBody CalculationDto calculationDto) {
+    @PostMapping("/sum")
+    public ResponseEntity<Integer> findSum(@RequestBody CalculationDto calculationDto) {
         return ResponseEntity.ok(calculationService.add(calculationDto));
     }
 
-    @PatchMapping("/difference")
-    public ResponseEntity<Integer> getDifference(@RequestBody CalculationDto calculationDto) {
+    @PostMapping("/difference")
+    public ResponseEntity<Integer> findDifference(@RequestBody CalculationDto calculationDto) {
         return ResponseEntity.ok(calculationService.substract(calculationDto));
     }
 
-    @PatchMapping("/product")
-    public ResponseEntity<Integer> getProduct(@RequestBody CalculationDto calculationDto) {
+    @PostMapping("/product")
+    public ResponseEntity<Integer> findProduct(@RequestBody CalculationDto calculationDto) {
         return ResponseEntity.ok(calculationService.multiply(calculationDto));
     }
 
-    @PatchMapping("/quotient")
-    public ResponseEntity<Integer> getQuotient(@RequestBody CalculationDto calculationDto) {
+    @PostMapping("/quotient")
+    public ResponseEntity<Integer> findQuotient(@RequestBody CalculationDto calculationDto) {
+        if (calculationDto.getB() == 0) {
+            throw new DivisionException("Division exception: Cannot divide by 0", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        }
         return ResponseEntity.ok(calculationService.divide(calculationDto));
-    }
-
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.publisher = applicationEventPublisher;
     }
 
 }

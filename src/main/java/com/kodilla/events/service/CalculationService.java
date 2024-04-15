@@ -14,8 +14,13 @@ public class CalculationService implements ApplicationEventPublisherAware {
 
     private ApplicationEventPublisher publisher;
 
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.publisher = applicationEventPublisher;
+    }
+
     public Integer add(CalculationDto calculationDto) {
-        var result = calculationDto.getA() + calculationDto.getB();
+        var result = Integer.sum(calculationDto.getA(), calculationDto.getB());
         publishCalculationEvent(calculationDto, Operation.SUM.getValue(), result);
         return result;
     }
@@ -33,7 +38,7 @@ public class CalculationService implements ApplicationEventPublisherAware {
     }
 
     public Integer divide(CalculationDto calculationDto) {
-        var result = calculationDto.getA() / calculationDto.getB();
+        var result = Integer.divideUnsigned(calculationDto.getA(), calculationDto.getB());
         publishCalculationEvent(calculationDto, Operation.DIVISION.getValue(), result);
         return result;
     }
@@ -45,11 +50,6 @@ public class CalculationService implements ApplicationEventPublisherAware {
                         List.of(calculationDto.getA(), calculationDto.getB()),
                         operation,
                         result));
-    }
-
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.publisher = applicationEventPublisher;
     }
 
 }
